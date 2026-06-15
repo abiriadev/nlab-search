@@ -1,0 +1,9 @@
+{
+	"name": "nlab-search",
+	"private": true,
+	"packageManager": "pnpm@11.5.3",
+	"scripts": {
+		"indexer": "pnpm --filter @nlab-search/indexer",
+		"web": "pnpm --filter @nlab-search/web"
+	}
+}

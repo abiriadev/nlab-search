@@ -1,0 +1,11 @@
+.direnv
+ignored
+.idea
+*.db
+.env
+.env.*
+dist
+*.log
+node_modules
+dist
+.wrangler
