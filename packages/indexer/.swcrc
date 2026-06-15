@@ -1,0 +1,18 @@
+{
+	"$schema": "https://swc.rs/schema.json",
+	"jsc": {
+		"parser": {
+			"syntax": "typescript"
+		},
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"target": "es2024"
+	},
+	"module": {
+		"type": "es6",
+		"resolveFully": true
+	},
+	"sourceMaps": "inline"
+}

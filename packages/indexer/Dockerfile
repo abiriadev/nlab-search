@@ -19,4 +19,7 @@ COPY tsconfig.base.json ./
 COPY packages/indexer ./packages/indexer
 
 WORKDIR /app/packages/indexer
-CMD ["pnpm", "start"]
+
+RUN pnpm build
+
+CMD ["node", "--enable-source-maps", "--env-file-if-exists", ".env", "dist/index.js"]
