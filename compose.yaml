@@ -1,0 +1,61 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.45
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_ENV: development
+    volumes:
+      - meili_data:/meili_data
+    ports:
+      - "7700:7700"
+    restart: unless-stopped
+
+  indexer:
+    build:
+      context: .
+      dockerfile: packages/indexer/Dockerfile
+    environment:
+      MEILI_HOST: ${MEILI_HOST:-http://meilisearch:7700}
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_INDEX: ${MEILI_INDEX:-pages}
+      REPO_URL: ${REPO_URL:-https://github.com/ncatlab/nlab-content}
+      REPO_BRANCH: ${REPO_BRANCH:-master}
+      REPO_DIR: ${REPO_DIR:-/data/repo}
+      STATE_DIR: ${STATE_DIR:-/data/state}
+      POLL_INTERVAL_MINUTES: ${POLL_INTERVAL_MINUTES:-10}
+      MAX_CONTENT_CHARS: ${MAX_CONTENT_CHARS:-}
+      INDEX_BATCH_SIZE: ${INDEX_BATCH_SIZE:-1000}
+    volumes:
+      - repo_data:/data
+      # Fast local dev: skip the 1.2 GB clone by reusing an existing checkout.
+      # Set REPO_DIR=/data/repo and uncomment:
+      # - ${HOME}/clone/nlab-content:/data/repo
+    depends_on:
+      - meilisearch
+    restart: unless-stopped
+
+  web:
+    # For the local & on-premise frontend hosting.
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+      args:
+        VITE_MEILI_HOST: ${VITE_MEILI_HOST:-http://localhost:7700}
+        VITE_MEILI_SEARCH_KEY: ${VITE_MEILI_SEARCH_KEY}
+        VITE_MEILI_INDEX: ${VITE_MEILI_INDEX:-pages}
+    ports:
+      - "8080:80"
+    depends_on:
+      - meilisearch
+
+  # Expose the Meilisearch endpoint through cloudflared.
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   command: tunnel run
+  #   environment:
+  #     TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+  #   restart: unless-stopped
+
+volumes:
+  meili_data:
+  repo_data:
