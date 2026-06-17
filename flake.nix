@@ -22,6 +22,8 @@
           packages = [
             nodejs
             pnpm
+            cloudflared
+            wrangler
           ];
         };
       }
