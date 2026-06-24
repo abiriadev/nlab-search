@@ -2,6 +2,8 @@
 
 A self-hosted full-text search over the [nLab](https://ncatlab.org) wiki.
 
+![](./preview.png)
+
 ## Quick start (Docker)
 
 ```sh
